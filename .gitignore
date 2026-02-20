@@ -1,0 +1,17 @@
+# Virtual Environment
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model Files (optional if large)
+*.joblib
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Frontend generated QR images
+frontend/qrs/

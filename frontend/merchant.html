@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Fraud Detection - Merchant Dashboard</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .intent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .intent-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Merchant Dashboard</h1>
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <div class="card">
+            <h2>Pending Confirmations</h2>
+            <div id="pending-list">
+                <p style="color: #94a3b8;">No pending transactions.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder scripts for simulation
+        function logout() { location.href = 'index.html'; }
+
+        // Mocking some pending intents for the demo
+        const pending = [
+            { id: 'tx-101', amount: 500, time: '2 mins ago' }
+        ];
+
+        function renderPending() {
+            const list = document.getElementById('pending-list');
+            if (pending.length === 0) return;
+
+            list.innerHTML = pending.map(item => `
+                <div class="intent-item">
+                    <div>
+                        <strong>₹${item.amount}</strong><br>
+                        <small style="color: #94a3b8;">ID: ${item.id} • ${item.time}</small>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-approve" onclick="action('${item.id}', true)">Confirm</button>
+                        <button class="btn-reject" onclick="action('${item.id}', false)">Reject</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function action(id, success) {
+            alert(success ? "Payment Confirmed" : "Payment Rejected/Fraud Flagged");
+            // Remove from list
+            const idx = pending.findIndex(i => i.id === id);
+            pending.splice(idx, 1);
+            if (pending.length === 0) {
+                document.getElementById('pending-list').innerHTML = '<p style="color: #94a3b8;">No pending transactions.</p>';
+            } else {
+                renderPending();
+            }
+        }
+
+        renderPending();
+    </script>
+</body>
+
+</html>

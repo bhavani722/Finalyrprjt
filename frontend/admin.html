@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Fraud Detection - Admin Panel</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1,
+        h2 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th {
+            text-align: left;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-fraud {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .badge-suspicious {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .explanation-view {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .feature-bar {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-name {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        .bar-container {
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            position: absolute;
+        }
+
+        .bar-positive {
+            background: var(--danger);
+        }
+
+        .bar-negative {
+            background: var(--success);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Fraud Control Center</h1>
+            <button onclick="location.href='index.html'">Logout</button>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Flagged Transactions</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Intent ID</th>
+                            <th>Amount</th>
+                            <th>Risk Score</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="case-list">
+                        <!-- Rows added by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card" id="detail-panel">
+                <h2>SHAP Explanation</h2>
+                <p id="no-selection-msg" style="color: #94a3b8;">Select a case to view AI reasoning.</p>
+                <div id="explanation-content" style="display: none;">
+                    <div class="explanation-view">
+                        <strong id="primary-cause"
+                            style="display: block; margin-bottom: 1rem; color: var(--danger);"></strong>
+                        <div id="feature-impacts"></div>
+                    </div>
+                    <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+                        <button
+                            style="flex: 1; padding: 0.75rem; background: var(--success); color: white; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer;"
+                            onclick="override('SUCCESS')">Approve</button>
+                        <button
+                            style="flex: 1; padding: 0.75rem; background: var(--danger); color: white; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer;"
+                            onclick="override('FRAUD_BLOCKED')">Block</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cases = [
+            {
+                id: 'it-9092', amount: 45000, score: 0.88, status: 'SUSPICIOUS', features: [
+                    { name: 'Transaction Amount', impact: 0.45 },
+                    { name: 'Location Deviation', impact: 0.32 },
+                    { name: 'Time of Day', impact: 0.15 },
+                    { name: 'Device Age', impact: -0.12 }
+                ]
+            },
+            {
+                id: 'it-4412', amount: 12000, score: 0.52, status: 'SUSPICIOUS', features: [
+                    { name: 'Velocity', impact: 0.40 },
+                    { name: 'New Merchant', impact: 0.20 },
+                    { name: 'Amount', impact: -0.05 }
+                ]
+            }
+        ];
+
+        function renderCases() {
+            const list = document.getElementById('case-list');
+            list.innerHTML = cases.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td>₹${c.amount}</td>
+                    <td>${(c.score * 100).toFixed(0)}%</td>
+                    <td><span class="badge badge-suspicious">${c.status}</span></td>
+                    <td><button onclick="viewDetail('${c.id}')" style="background: var(--primary); color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer;">Review</button></td>
+                </tr>
+            `).join('');
+        }
+
+        let selectedId = null;
+
+        function viewDetail(id) {
+            selectedId = id;
+            document.getElementById('no-selection-msg').style.display = 'none';
+            document.getElementById('explanation-content').style.display = 'block';
+
+            const c = cases.find(item => item.id === id);
+            document.getElementById('primary-cause').innerText = `Primary Risk: ${c.features[0].name}`;
+
+            const container = document.getElementById('feature-impacts');
+            container.innerHTML = c.features.map(f => `
+                <div class="feature-bar">
+                    <div class="feature-name">${f.name}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill ${f.impact > 0 ? 'bar-positive' : 'bar-negative'}" 
+                             style="width: ${Math.abs(f.impact * 100)}%; left: ${f.impact > 0 ? '50%' : (50 - Math.abs(f.impact * 100)) + '%'}"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function override(decision) {
+            alert("Case " + selectedId + " has been marked as " + decision);
+            const idx = cases.findIndex(c => c.id === selectedId);
+            cases.splice(idx, 1);
+            document.getElementById('explanation-content').style.display = 'none';
+            document.getElementById('no-selection-msg').style.display = 'block';
+            renderCases();
+        }
+
+        renderCases();
+    </script>
+</body>
+
+</html>

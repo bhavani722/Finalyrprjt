@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity UPI Fraud Shield | Advanced Fintech Analytics</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <script src="js/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111111;
+            --sidebar-bg: #0a0a0a;
+            --primary: #00ff88;
+            --primary-glow: rgba(0, 255, 136, 0.3);
+            --secondary: #00d4ff;
+            --danger: #ff3e3e;
+            --warning: #ffb800;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-dim);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--glass);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-glow);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2rem 3rem;
+            max-width: calc(100vw - 260px);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 255, 136, 0.4);
+        }
+
+        /* Grid Layouts */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .stats-card .label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Tables */
+        .table-container {
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-fraud {
+            background: rgba(255, 62, 62, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-suspicious {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-timeout {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dim);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Risk Meter */
+        .risk-meter-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .risk-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 10px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .risk-circle .score {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--glass);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            SHIELD
+        </div>
+        <div class="nav-item active" onclick="showSection('dashboard', this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('create-intent', this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14" />
+            </svg>
+            Create Intent
+        </div>
+        <div class="nav-item" onclick="showSection('analytics', this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+            Analytics
+        </div>
+        <div class="nav-item" onclick="showSection('metrics', this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Model Performance
+        </div>
+        <div class="nav-item" onclick="showSection('qr-portal', this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                <path d="M14 14h7v7h-7zM7 7V3h4v4M17 17v4h4v-4"></path>
+            </svg>
+            QR Portal
+        </div>
+        <div class="nav-item" style="margin-top: auto; color: #ff3e3e;" onclick="logout()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1 id="section-title">Operations Dashboard</h1>
+            <div id="user-info" style="font-weight: 500;">Admin: <span style="color: var(--primary);">Fraud
+                    Analyst</span></div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <div class="stats-grid">
+                <div class="card stats-card">
+                    <div class="label">Total Volume</div>
+                    <div class="value" id="stat-total">0</div>
+                </div>
+                <div class="card stats-card">
+                    <div class="label">Fraud Blocked</div>
+                    <div class="value" id="stat-fraud" style="color: var(--danger);">0</div>
+                </div>
+                <div class="card stats-card">
+                    <div class="label">Fraud Ratio</div>
+                    <div class="value" id="stat-ratio">0%</div>
+                </div>
+                <div class="card stats-card" style="border-color: var(--warning);">
+                    <div class="label">Suspicious Flags</div>
+                    <div class="value" id="stat-suspicious" style="color: var(--warning);">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>Real-time Transactions</h3>
+                    <button class="btn btn-primary" style="padding: 0.5rem 1rem;"
+                        onclick="loadDashboard()">Refresh</button>
+                </div>
+                <div class="table-container">
+                    <table id="txn-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Amount</th>
+                                <th>Risk Score</th>
+                                <th>ML Label</th>
+                                <th>Lifecycle Status</th>
+                                <th>Decision</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Intent Section -->
+        <div id="create-intent" class="section">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="card">
+                    <h3>New Payment Intent</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Initiate a new UPI transaction for
+                        analysis.</p>
+                    <form id="intent-form">
+                        <div class="form-group">
+                            <label>Merchant ID</label>
+                            <input type="text" id="merchant-id" value="merchant1">
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Amount (₹)</label>
+                            <input type="number" id="amount" placeholder="e.g. 5000">
+                        </div>
+                        <div class="form-group">
+                            <label>Device Hash</label>
+                            <input type="text" id="device" value="df_9a12c8b4">
+                        </div>
+                        <div class="form-group">
+                            <label>Location (Geo)</label>
+                            <input type="text" id="location" value="Bangalore, IN">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Analyze & Create</button>
+                    </form>
+                </div>
+
+                <div class="card" id="risk-result" style="display: none;">
+                    <h3>Risk Analysis Engine</h3>
+                    <div class="risk-meter-container">
+                        <div class="risk-circle" id="risk-circle">
+                            <div class="score" id="risk-score">0%</div>
+                        </div>
+                        <div id="risk-level-label" style="font-size: 1.2rem; font-weight: 700;">LOW RISK</div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Top Risk Factors:</h4>
+                        <ul id="risk-features" style="color: var(--text-dim); padding-left: 1.5rem;">
+                        </ul>
+                    </div>
+                    <div id="intent-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
+                        <button class="btn" style="flex: 1; background: var(--primary); color: #000;"
+                            id="btn-pay">Approve Payment</button>
+                        <button class="btn" style="flex: 1; background: var(--danger); color: white;"
+                            id="btn-block">Block Intent</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics" class="section">
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div class="card">
+                    <h3>Monthly Fraud Trends</h3>
+                    <canvas id="trendChart" height="200"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Risk Distribution</h3>
+                    <canvas id="distChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Metrics Section -->
+        <div id="metrics" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h3>ML Architecture: Voting Ensemble</h3>
+                    <p style="color: var(--text-dim);">Random Forest + Logistic Regression with Borderline-SMOTE</p>
+                </div>
+                <button class="btn btn-primary" onclick="retrainModel()">Retrain Model</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="card">
+                    <div class="label">Accuracy</div>
+                    <div class="value" id="metric-acc">0.00</div>
+                </div>
+                <div class="card">
+                    <div class="label">Precision</div>
+                    <div class="value" id="metric-prec">0.00</div>
+                </div>
+                <div class="card">
+                    <div class="label">Recall</div>
+                    <div class="value" id="metric-recall">0.00</div>
+                </div>
+                <div class="card">
+                    <div class="label">ROC-AUC</div>
+                    <div class="value" id="metric-auc">0.00</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Confusion Matrix</h3>
+                <div class="table-container">
+                    <table style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Predicted LEGIT</th>
+                                <th>Predicted FRAUD</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cm-body">
+                            <!-- Injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Portal Section -->
+        <div id="qr-portal" class="section">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="card">
+                    <h3>Generate Payment QR</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Create a static QR for instant payment
+                        scanning.</p>
+                    <div class="form-group">
+                        <label>Expected Amount (₹)</label>
+                        <input type="number" id="qr-amount" placeholder="e.g. 1500">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="generateQR()">Generate QR
+                        Code</button>
+
+                    <div id="qr-display" style="margin-top: 2rem; text-align: center; display: none;">
+                        <img id="qr-img" src="" style="width: 200px; border-radius: 12px; border: 4px solid white;">
+                        <p style="margin-top: 1rem; color: var(--primary); font-weight: 600;">SCAN TO PAY</p>
+                        <button class="btn" style="margin-top: 1rem; background: var(--secondary); color: black;"
+                            onclick="simulateScan()">[Simulate Scan]</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>QR Intent Lifecycle</h3>
+                    <p style="color: var(--text-dim);">Live tracking of QR-initiated transactions.</p>
+                    <div id="qr-log"
+                        style="font-family: monospace; color: var(--primary); font-size: 0.85rem; max-height: 300px; overflow-y: auto;">
+                        > Waiting for scan...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trendChart, distChart;
+        const API_URL = ''; // Adjust if needed
+
+        function showSection(id, el) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+
+            const title = id.replace('-', ' ').toUpperCase();
+            document.getElementById('section-title').innerText = id === 'dashboard' ? 'Operations Dashboard' : title;
+
+            if (id === 'dashboard') loadDashboard();
+            if (id === 'analytics') loadAnalytics();
+            if (id === 'metrics') loadMetrics();
+        }
+
+        async function apiFetch(url, options = {}) {
+            const token = localStorage.getItem("token");
+            const defaultOptions = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                }
+            };
+            const finalOptions = {
+                ...defaultOptions,
+                ...options
+            };
+            if (options.body && typeof options.body !== "string") {
+                finalOptions.body = JSON.stringify(options.body);
+            }
+
+            try {
+                const response = await fetch(`${API_URL}${url}`, finalOptions);
+
+                if (response.status === 401) {
+                    alert("Session expired. Please login again.");
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                    return null;
+                }
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.error("API Error:", err);
+                    return null;
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                return null;
+            }
+        }
+
+        async function loadDashboard() {
+            const summary = await apiFetch('/admin/analytics/summary');
+            if (summary) {
+                document.getElementById('stat-total').innerText = summary.total_transactions;
+                document.getElementById('stat-fraud').innerText = summary.total_fraud;
+                document.getElementById('stat-ratio').innerText = summary.fraud_percentage + '%';
+                document.getElementById('stat-suspicious').innerText = summary.suspicious_count;
+            }
+
+            const cases = await apiFetch('/admin/fraud-cases');
+            const tbody = document.querySelector('#txn-table tbody');
+            tbody.innerHTML = '';
+
+            if (Array.isArray(cases)) {
+                cases.forEach(c => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="color: var(--text-dim);">${new Date(c.timestamp).toLocaleString()}</td>
+                        <td>₹${c.amount}</td>
+                        <td><div style="width: 100px; height: 8px; background: #222; border-radius: 4px; overflow: hidden;"><div style="width: ${c.ml_score * 100}%; height: 100%; background: ${c.ml_score > 0.7 ? 'var(--danger)' : (c.ml_score > 0.4 ? 'var(--warning)' : 'var(--primary)')}"></div></div></td>
+                        <td><span class="badge badge-${(c.ml_label || 'unknown').toLowerCase()}">${c.ml_label || 'LEGIT'}</span></td>
+                        <td><span class="badge ${c.status === 'SUCCESS' ? 'badge-success' : (c.status === 'FRAUD' ? 'badge-fraud' : 'badge-timeout')}">${c.status}</span></td>
+                        <td>${c.final_decision}</td>
+                        <td>
+                            ${c.status === 'SUSPICIOUS' ? `<button class="btn btn-primary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="override('${c.intent_id}', 'SUCCESS')">Override</button>` : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        async function override(intent_id, decision) {
+            await apiFetch('/admin/override', {
+                method: 'POST',
+                body: JSON.stringify({ intent_id, decision })
+            });
+            loadDashboard();
+        }
+
+        document.getElementById('intent-form').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('loader').style.display = 'flex';
+
+            const data = {
+                merchant_id: document.getElementById('merchant-id').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                device_fingerprint: document.getElementById('device').value,
+                location: document.getElementById('location').value
+            };
+
+            const res = await apiFetch('/merchant/create-intent', {
+                method: 'POST',
+                body: data
+            });
+
+            document.getElementById('loader').style.display = 'none';
+            if (res) {
+                const resultCard = document.getElementById('risk-result');
+                resultCard.style.display = 'block';
+                const score = (res.ml_score * 100).toFixed(1);
+                document.getElementById('risk-score').innerText = score + '%';
+                document.getElementById('risk-level-label').innerText = res.risk_level + ' RISK';
+
+                const circle = document.getElementById('risk-circle');
+                const color = res.risk_level === 'HIGH' ? 'var(--danger)' : (res.risk_level === 'MEDIUM' ? 'var(--warning)' : 'var(--primary)');
+                circle.style.borderColor = color;
+                circle.style.boxShadow = `0 0 30px ${color}44`;
+
+                const featuresList = document.getElementById('risk-features');
+                featuresList.innerHTML = '';
+                // Since this uses the automatic flow, we might need a separate call for explanation
+                const expl = await apiFetch(`/fraud/explain/${res.intent_id}`);
+                if (expl && expl.top_features) {
+                    expl.top_features.forEach(f => {
+                        const li = document.createElement('li');
+                        li.innerText = f;
+                        featuresList.appendChild(li);
+                    });
+                } else {
+                    featuresList.innerHTML = '<li>Legitimate transaction patterns detected.</li>';
+                }
+
+                document.getElementById('btn-pay').onclick = () => finalize(res.intent_id, true);
+                document.getElementById('btn-block').onclick = () => finalize(res.intent_id, false);
+            }
+        };
+
+        async function finalize(intent_id, success) {
+            await apiFetch('/merchant/process-payment', {
+                method: 'POST',
+                body: { intent_id, success }
+            });
+            document.getElementById('risk-result').style.display = 'none';
+            showSection('dashboard', document.querySelector('.nav-item'));
+        }
+
+        async function loadAnalytics() {
+            const monthly = await apiFetch('/admin/analytics/monthly');
+            if (Array.isArray(monthly)) {
+                const labels = monthly.map(m => m.month);
+                const totals = monthly.map(m => m.total);
+                const frauds = monthly.map(m => m.fraud);
+
+                if (trendChart) trendChart.destroy();
+                trendChart = new Chart(document.getElementById('trendChart'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: 'Total Volume', data: totals, borderColor: 'var(--secondary)', tension: 0.4 },
+                            { label: 'Fraud cases', data: frauds, borderColor: 'var(--danger)', tension: 0.4 }
+                        ]
+                    },
+                    options: { plugins: { legend: { labels: { color: 'white' } } }, scales: { y: { grid: { color: '#222' } }, x: { grid: { color: '#222' } } } }
+                });
+            }
+
+            const summary = await apiFetch('/admin/analytics/summary');
+            if (distChart) distChart.destroy();
+            distChart = new Chart(document.getElementById('distChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Legit', 'Fraud', 'Suspicious'],
+                    datasets: [{
+                        data: [summary.total_transactions - summary.total_fraud - summary.suspicious_count, summary.total_fraud, summary.suspicious_count],
+                        backgroundColor: ['var(--primary)', 'var(--danger)', 'var(--warning)']
+                    }]
+                },
+                options: { plugins: { legend: { labels: { color: 'white' } } } }
+            });
+        }
+
+        async function loadMetrics() {
+            const metrics = await apiFetch('/admin/model-metrics');
+            if (metrics) {
+                document.getElementById('metric-acc').innerText = (metrics.accuracy || 0).toFixed(3);
+                document.getElementById('metric-prec').innerText = (metrics.precision || 0).toFixed(3);
+                document.getElementById('metric-recall').innerText = (metrics.recall || 0).toFixed(3);
+                document.getElementById('metric-auc').innerText = (metrics.roc_auc || 0).toFixed(3);
+
+                const cm = metrics.confusion_matrix || [[0, 0], [0, 0]];
+                const tbody = document.getElementById('cm-body');
+                tbody.innerHTML = `
+                    <tr><td><strong>Actual LEGIT</strong></td><td>${cm[0][0]}</td><td>${cm[0][1]}</td></tr>
+                    <tr><td><strong>Actual FRAUD</strong></td><td>${cm[1][0]}</td><td>${cm[1][1]}</td></tr>
+                `;
+            }
+        }
+
+        async function retrainModel() {
+            document.getElementById('loader').style.display = 'flex';
+            const res = await apiFetch('/admin/retrain', { method: 'POST' });
+            document.getElementById('loader').style.display = 'none';
+            if (res) {
+                alert('Model retrained with new data!');
+                loadMetrics();
+            }
+        }
+
+        // QR Features
+        let currentQRPayload = "";
+
+        async function generateQR() {
+            const amount = document.getElementById('qr-amount').value;
+            if (!amount) return alert("Enter amount");
+
+            const res = await apiFetch('/merchant/generate-qr', {
+                method: 'POST',
+                body: { amount }
+            });
+
+            if (res && res.qr_path) {
+                document.getElementById('qr-display').style.display = 'block';
+                document.getElementById('qr-img').src = res.qr_path;
+                // Use actual merchant ID from logged in user if available
+                const user_id = localStorage.getItem('user_id') || '1';
+                currentQRPayload = `${user_id}|${amount}`;
+                logQR("QR Generated for ₹" + amount);
+            }
+        }
+
+        async function simulateScan() {
+            logQR("Scanning QR...");
+            const res = await apiFetch('/scan-qr', {
+                method: 'POST',
+                body: { payload: currentQRPayload }
+            });
+
+            if (res) {
+                logQR(`Intent Created: ${res.intent_id}`);
+                logQR(`ML Result: ${res.ml_label} (Score: ${(res.ml_score * 100).toFixed(1)}%)`);
+                logQR(`Risk Level: ${res.risk_level}`);
+                logQR(`Status: ${res.status}`);
+
+                if (res.risk_level === 'HIGH' || res.risk_level === 'MEDIUM') {
+                    showRiskModal(res);
+                }
+            }
+        }
+
+        function logQR(msg) {
+            const log = document.getElementById('qr-log');
+            const entry = document.createElement('div');
+            entry.innerText = `> ${new Date().toLocaleTimeString()}: ${msg}`;
+            log.prepend(entry);
+        }
+
+        function showRiskModal(res) {
+            alert(`⚠ ${res.risk_level} RISK DETECTED\n\nIntent: ${res.intent_id}\nScore: ${(res.ml_score * 100).toFixed(1)}%\nLabel: ${res.ml_label}`);
+        }
+
+        // Real-time Alerts Polling
+        setInterval(async () => {
+            if (!localStorage.getItem('token')) return;
+            const data = await apiFetch('/merchant/alerts');
+            if (data && data.new_alert) {
+                alert("⚠ Suspicious Transaction\nAmount: ₹" + data.amount +
+                    "\nRisk Level: " + data.risk_level +
+                    "\nScore: " + (data.ml_score * 100).toFixed(1) + "%");
+            }
+        }, 5000);
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html'; // In a real app we'd redirect or show login
+        }
+
+        // Check login
+        window.onload = () => {
+            if (!localStorage.getItem('token')) {
+                // For demo, check if we can get a token with admin credentials automatically
+                fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin1', password: 'admin123' })
+                })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res && res.access_token) {
+                            localStorage.setItem("token", res.access_token);
+                            localStorage.setItem("user_id", res.user_id);
+                            loadDashboard();
+                        }
+                    });
+            } else {
+                loadDashboard();
+            }
+        };
+    </script>
+</body>
+
+</html>

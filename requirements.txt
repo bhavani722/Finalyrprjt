@@ -1,0 +1,11 @@
+flask
+flask-sqlalchemy
+flask-jwt-extended
+numpy
+pandas
+scikit-learn
+imbalanced-learn
+shap
+matplotlib
+joblib
+pytest
